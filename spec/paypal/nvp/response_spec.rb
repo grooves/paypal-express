@@ -106,6 +106,19 @@ describe Paypal::NVP::Response do
       end
     end
 
+    context 'when DoReferenceTransaction response given' do
+      before do
+        fake_response 'DoReferenceTransaction/success'
+      end
+
+      it 'should handle all attributes' do
+        Paypal.logger.should_not_receive(:warn)
+        response = request.charge! 'reference_id', 1000, :currency_code => 'JPY'
+        response.billing_agreement.identifier.should == 'B-7HU5U5U1ULU14U49E'
+        response.billing_agreement.info.should be_instance_of(Paypal::Payment::Response::Info)
+      end
+    end
+
     context 'when CreateRecurringPaymentsProfile response given' do
       before do
         fake_response 'CreateRecurringPaymentsProfile/success'
